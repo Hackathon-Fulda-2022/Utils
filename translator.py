@@ -18,6 +18,3 @@ def translate(text, lang = "DE"):
         if result.status_code == 456: return "Quota exceeded! Change auth_key"
     
     return "Too many requests!"
-
-
-print(translate("Hello"))

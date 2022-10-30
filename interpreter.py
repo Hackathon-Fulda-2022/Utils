@@ -53,55 +53,85 @@ con_array = []
 pre_array = []
 
 
-keys_patient = ["patienten", "patientenname", "patient"]
-keys_nurse = ["pflegers", "pflegername"]
-key_ende = ["ende"]
+keys_patient = ["Patienten", "Patientenname", "Patient"]
+keys_nurse = ["Pfleger", "Pflegername"]
+key_ende = ["Ende", "Ende."]
 
-keys_vit = [["herzfrequenz", "puls", "pulsfrequenz"],
-            ["blutdruck", "gefäßdruck", "systolisch", "oberdruck"],
-            ["blutdruck", "gefäßdruck", "diastolisch", "unterdruck"],
-            ["körpertemperatur", "temperatur"],
-            ["gewicht", "köpergewicht", "wiegen", "wiegt"],
-            ["atemfrequenz"],
-            ["sauerstoffsättigung"],
-            ["blutzucker"],
-            ["erythrozyten"],
-            ["leukozyten"],
-            ["thrombozyten"],
-            ["hämatokrit"],
-            ["hämoglobin"],
-            ["cholesterin"],
-            ["schmerzempfinden", "schmerzen"], 
-            ["bradenscore"],
-            ["brassindex"],
-            ["biensteinskala"],
-            ["stuhlausscheidung", "stuhl", "stuhlgang"],
-            ["flüssigkeitsaufnahme"],
-            ["größe", "körperhöhe"],
-            ["stürze"]]
+keys_vit = [["Herzfrequenz", "Puls", "Pulsfrequenz"],
+            ["Blutdruck", "Gefäßdruck", "systolisch", "Oberdruck"],
+            ["Blutdruck", "Gefäßdruck", "diastolisch", "Unterdruck"],
+            ["Körpertemperatur", "Temperatur"],
+            ["Gewicht", "Köpergewicht", "wiegen", "wiegt"],
+            ["Atemfrequenz"],
+            ["Sauerstoffsättigung"],
+            ["Blutzucker"],
+            ["Erythrozyten"],
+            ["Leukozyten"],
+            ["Thrombozyten"],
+            ["Hämatokrit"],
+            ["Hämoglobin"],
+            ["Cholesterin"],
+            ["Schmerzempfinden", "Schmerzen"], 
+            ["Bradenscore"],
+            ["Brassindex"],
+            ["Biensteinskala"],
+            ["Stuhlausscheidung", "Stuhl", "Stuhlgang"],
+            ["Flüssigkeitsaufnahme"],
+            ["Größe", "Körperhöhe"],
+            ["Stürze"]]
 
-keys_med = [["medikament"],
-            ["dosis", "menge"],
-            ["form"],
-            ["notiz", "anhang", "anmerkung"],
-            ["grund", "begründung"]]
+keys_med = [["Medikament"],
+            ["Dosis", "Menge"],
+            ["Form"],
+            ["Notiz", "Anhang", "Anmerkung"],
+            ["Grund", "Begründung"]]
 
-keys_con = [["schwere"],
-            ["beschreibung", "status", "situation"]]
+keys_con = [["Schwere"],
+            ["Beschreibung", "Status", "Situation"]]
 
-keys_pre = [["große", "hilfe", "schnell", "dringend"],
-            ["kann", "brauche", "schnell"],
+keys_pre = [["große", "hilfe", "schnell", "dringend", "sofort"],
+            ["kann", "brauche"],
             ["könnte", "bräuchte"]]
 
 def interpreter (text):
-    text = text.lower()
+
+    vitals_dict['vitType'] = ''
+    vitals_dict['vitValue'] = ''
+    vitals_dict['vitDateTime'] = ''
+    vitals_dict['patientName'] = ''
+    vitals_dict['employeeName'] = ''
+    vitals_dict['vitReleased'] = ''
+
+    medication_dict['medNumber'] = ''
+    medication_dict['patientName'] = ''
+    medication_dict['employeeName'] = ''
+    medication_dict['medName'] = ''
+    medication_dict['dose'] = ''
+    medication_dict['form'] = ''
+    medication_dict['dateTime'] = ''
+    medication_dict['note'] = ''
+    medication_dict['reason'] = ''
+    medication_dict['medReleased'] = ''
+
+    patientcondition_dict['pcId'] = ''
+    patientcondition_dict['pcPatientName'] = ''
+    patientcondition_dict['pcDateTime'] = ''
+    patientcondition_dict['pcType'] = ''
+    patientcondition_dict['pcText'] = ''
+    patientcondition_dict['pcEmployeeName']= ''
+    patientcondition_dict['pcReleased'] = ''
+
+    patientRequest_dict['patientName'] = ''
+    patientRequest_dict['pRStartDateTime'] = ''
+    patientRequest_dict['pREmployee'] = ''
+    patientRequest_dict['pREndDateTime'] = ''
+    patientRequest_dict['pRText'] = ''
+    patientRequest_dict['pRPrio'] = ''
+
+
     text = text.replace(".", "")
     text = text.replace(",", ".")
     text = text.split()
-
-    for x in text:
-        if x[-1] == '.':
-            x = x.replace('.', '')
     
     #check if not patient request
     if text[0][:1] != '#':
@@ -125,7 +155,7 @@ def interpreter (text):
         for i in range(len(values)):
             if i == len(values) - 1:
                 break
-            medication_dict['medName'] = get_next_string(text, values[i], 1)
+            medication_dict['medName'] = get_next_string(text, values[i], 1)[0]
             medication_dict['medNumber'] = random.randint(0,1000)
             pos = find_position(text[values[i]:values[i + 1]], keys_med[1])
             if pos != -1: medication_dict['dose'] = get_next_value(text[values[i]:values[i + 1]], pos)
@@ -246,14 +276,14 @@ def get_vit_value(text, pos, index):
 def get_patient_name(text):
     pos = find_position(text, keys_patient)
     val = (get_next_string(text, pos, 2))
-    vitals_dict['patientName'] = (val[0] + " " + val[1])
-    medication_dict['patientName'] = (val[0] + " " + val[1])
-    patientcondition_dict['pcPatientName'] = (val[0] + " " + val[1])
+    vitals_dict['patientName'] = (val[0] + " " + val[1]).replace('.', '')
+    medication_dict['patientName'] = (val[0] + " " + val[1]).replace('.', '')
+    patientcondition_dict['pcPatientName'] = (val[0] + " " + val[1]).replace('.', '')
 
 #saves employee name in all arrays
 def get_employee_name(text):
     pos = find_position(text, keys_nurse)
     val = (get_next_string(text, pos, 2))
-    vitals_dict['employeeName'] = (val[0] + " " + val[1])
-    medication_dict['employeeName'] = (val[0] + " " + val[1])
-    patientcondition_dict['pcEmployeeName'] = (val[0] + " " + val[1])
+    vitals_dict['employeeName'] = (val[0] + " " + val[1]).replace('.', '')
+    medication_dict['employeeName'] = (val[0] + " " + val[1]).replace('.', '')
+    patientcondition_dict['pcEmployeeName'] = (val[0] + " " + val[1]).replace('.', '')

@@ -52,7 +52,7 @@ con_array = []
 pre_array = []
 
 
-keys_patient = ["patienten", "patientenname"]
+keys_patient = ["patienten", "patientenname", "Patient"]
 keys_nurse = ["pflegers", "pflegername"]
 key_ende = ["ende"]
 
@@ -121,7 +121,7 @@ def interpreter (text):
             if i == len(values) - 1:
                 break
             medication_dict['medName'] = get_next_string(text, values[i], 1)
-            medication_dict['medNumber'] = get_next_value(text, values[i] + 1)
+            medication_dict['medNumber'] = random.randint(0,1000)
             pos = find_position(text[values[i]:values[i + 1]], keys_med[1])
             if pos != -1: medication_dict['dose'] = get_next_value(text[values[i]:values[i + 1]], pos)
             pos = find_position(text[values[i]:values[i + 1]], keys_med[2])

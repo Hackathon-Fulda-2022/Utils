@@ -1,5 +1,6 @@
 import nltk
 import copy
+import random
 
 #dictionary for vitality information
 vitals_dict = {
@@ -52,7 +53,7 @@ con_array = []
 pre_array = []
 
 
-keys_patient = ["patienten", "patientenname", "Patient"]
+keys_patient = ["patienten", "patientenname", "patient"]
 keys_nurse = ["pflegers", "pflegername"]
 key_ende = ["ende"]
 
@@ -120,7 +121,7 @@ def interpreter (text):
         for i in range(len(values)):
             if i == len(values) - 1:
                 break
-            medication_dict['medName'] = get_next_string(text, values[i], 1)
+            medication_dict['medName'] = get_next_string(text, values[i], 1).replace(',', '')
             medication_dict['medNumber'] = random.randint(0,1000)
             pos = find_position(text[values[i]:values[i + 1]], keys_med[1])
             if pos != -1: medication_dict['dose'] = get_next_value(text[values[i]:values[i + 1]], pos)
@@ -189,7 +190,7 @@ def interpreter (text):
         pre_array.append(patientRequest_dict)
         
     #return arrays
-    return vit_array + med_array + con_array + pre_array
+    return vit_array , med_array , con_array , pre_array
     
     
     
@@ -234,21 +235,21 @@ def find_position(text, arr):
 #saves vitality values in dict_array
 def get_vit_value(text, pos, index):
     vitals_dict['vitType'] = index + 1
-    vitals_dict['vitValue'] = get_next_value(text, pos)
+    vitals_dict['vitValue'] = get_next_value(text, pos).replace(',', '')
     vit_array.append(copy.deepcopy(vitals_dict))
 
 #saves patient name in all arrays
 def get_patient_name(text):
     pos = find_position(text, keys_patient)
     val = (get_next_string(text, pos, 2))
-    vitals_dict['patientName'] = val[0] + " " + val[1]
-    medication_dict['patientName'] = val[0] + " " + val[1]
-    patientcondition_dict['pcPatientName'] = val[0] + " " + val[1]
+    vitals_dict['patientName'] = (val[0] + " " + val[1]).replace(',', '')
+    medication_dict['patientName'] = (val[0] + " " + val[1]).replace(',', '')
+    patientcondition_dict['pcPatientName'] = (val[0] + " " + val[1]).replace(',', '')
 
 #saves employee name in all arrays
 def get_employee_name(text):
     pos = find_position(text, keys_nurse)
     val = (get_next_string(text, pos, 2))
-    vitals_dict['employeeName'] = val[0] + " " + val[1]
-    medication_dict['employeeName'] = val[0] + " " + val[1]
-    patientcondition_dict['pcEmployeeName'] = val[0] + " " + val[1]
+    vitals_dict['employeeName'] = (val[0] + " " + val[1]).replace(',', '')
+    medication_dict['employeeName'] = (val[0] + " " + val[1]).replace(',', '')
+    patientcondition_dict['pcEmployeeName'] = (val[0] + " " + val[1]).replace(',', '')

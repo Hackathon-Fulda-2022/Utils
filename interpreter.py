@@ -1,3 +1,4 @@
+from datetime import datetime
 import nltk
 import copy
 import random
@@ -97,7 +98,7 @@ def interpreter (text):
 
     vitals_dict['vitType'] = ''
     vitals_dict['vitValue'] = ''
-    vitals_dict['vitDateTime'] = ''
+    vitals_dict['vitDateTime'] = datetime.timestamp(datetime.now())
     vitals_dict['patientName'] = ''
     vitals_dict['employeeName'] = ''
     vitals_dict['vitReleased'] = ''
@@ -108,21 +109,21 @@ def interpreter (text):
     medication_dict['medName'] = ''
     medication_dict['dose'] = ''
     medication_dict['form'] = ''
-    medication_dict['dateTime'] = ''
+    medication_dict['dateTime'] = datetime.timestamp(datetime.now())
     medication_dict['note'] = ''
     medication_dict['reason'] = ''
     medication_dict['medReleased'] = ''
 
     patientcondition_dict['pcId'] = ''
     patientcondition_dict['pcPatientName'] = ''
-    patientcondition_dict['pcDateTime'] = ''
+    patientcondition_dict['pcDateTime'] = datetime.timestamp(datetime.now())
     patientcondition_dict['pcType'] = ''
     patientcondition_dict['pcText'] = ''
     patientcondition_dict['pcEmployeeName']= ''
     patientcondition_dict['pcReleased'] = ''
 
     patientRequest_dict['patientName'] = ''
-    patientRequest_dict['pRStartDateTime'] = ''
+    patientRequest_dict['pRStartDateTime'] = datetime.timestamp(datetime.now())
     patientRequest_dict['pREmployee'] = ''
     patientRequest_dict['pREndDateTime'] = ''
     patientRequest_dict['pRText'] = ''
@@ -276,14 +277,16 @@ def get_vit_value(text, pos, index):
 def get_patient_name(text):
     pos = find_position(text, keys_patient)
     val = (get_next_string(text, pos, 2))
-    vitals_dict['patientName'] = (val[0] + " " + val[1]).replace('.', '')
-    medication_dict['patientName'] = (val[0] + " " + val[1]).replace('.', '')
-    patientcondition_dict['pcPatientName'] = (val[0] + " " + val[1]).replace('.', '')
+    if pos != -1:
+        vitals_dict['patientName'] = (val[0] + " " + val[1]).replace('.', '')
+        medication_dict['patientName'] = (val[0] + " " + val[1]).replace('.', '')
+        patientcondition_dict['pcPatientName'] = (val[0] + " " + val[1]).replace('.', '')
 
 #saves employee name in all arrays
 def get_employee_name(text):
     pos = find_position(text, keys_nurse)
     val = (get_next_string(text, pos, 2))
-    vitals_dict['employeeName'] = (val[0] + " " + val[1]).replace('.', '')
-    medication_dict['employeeName'] = (val[0] + " " + val[1]).replace('.', '')
-    patientcondition_dict['pcEmployeeName'] = (val[0] + " " + val[1]).replace('.', '')
+    if pos != -1:
+        vitals_dict['employeeName'] = (val[0] + " " + val[1]).replace('.', '')
+        medication_dict['employeeName'] = (val[0] + " " + val[1]).replace('.', '')
+        patientcondition_dict['pcEmployeeName'] = (val[0] + " " + val[1]).replace('.', '')
